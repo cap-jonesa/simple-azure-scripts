@@ -16,8 +16,8 @@ automate and simplify common operations.
 ## Installation
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/azure-cli-python-project.git
-    cd azure-cli-python-project
+    git clone https://github.com/cap-jonesa/simple-azure-scripts.git
+    cd simple-azure-scripts
     ```
 
 2. Install the required Python packages:
@@ -34,6 +34,7 @@ automate and simplify common operations.
 To run a script, use the following command:
 ```bash
 python script_name.py
+```
 
 ## License
 This project is licensed under the 3-Clause BSD License. See the LICENSE file
