@@ -27,7 +27,7 @@ automate and simplify common operations.
 
 3. Ensure Azure CLI is installed and configured:
     ```bash
-    az login
+    az login --use-device-code
     ```
 
 ## Usage
