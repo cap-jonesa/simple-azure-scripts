@@ -32,41 +32,41 @@ import json
 import time
 
 def get_subscriptions():
-    """
-    Return a JSON format list of all account identification numbers.
+    """
+    Return a JSON format list of all account identification numbers.
 
-    Parameters:
+    Parameters:
     N/A
 
-    Returns:
-    result.stdout: A collection of account numbers in JSON format.
+    Returns:
+    result.stdout: A collection of account numbers in JSON format.
 
-    Example:
+    Example:
     subscriptions = get_subscriptions()
     
     az cli command:
     az account list --output json
-    """
+    """
     result = subprocess.run(['az', 'account', 'list', '--query', '[].id', '-o', 'json'],
                             capture_output=True, text=True)
     return json.loads(result.stdout)
 
 def get_assessments(subscription_id):
     """
-    Set the Azure subscription and retrieve security assessments.
+    Set the Azure subscription and retrieve security assessments.
 
-    Parameters:
-    subscription_id (str): The ID of the Azure subscription to set.
+    Parameters:
+    subscription_id (str): The ID of the Azure subscription to set.
 
-    Returns:
-    list: A list of security assessments in JSON format.
+    Returns:
+    list: A list of security assessments in JSON format.
 
-    Example:
-    assessments = get_assessments('your-subscription-id')
+    Example:
+    assessments = get_assessments('your-subscription-id')
     
     az cli command:
     az account set --subscription $subscription_id
-    """
+    """
     subprocess.run(['az', 'account', 'set', '--subscription', subscription_id])
     result = subprocess.run(['az', 'security', 'assessment', 'list', '-o', 'json'],
                             capture_output=True, text=True)
@@ -74,18 +74,18 @@ def get_assessments(subscription_id):
 
 def main():
     """
-    Main function to execute the writing of a json format file containing the
+    Main function to execute the writing of a json format file containing the
     security assessments for an account.
 
-    This function orchestrates the gathering of the account IDs and then
+    This function orchestrates the gathering of the account IDs and then
     collects the security assessments. It takes no parameters and returns
     nothing. It serves as the entry point for the script when run from the
     command line. It writes to a file in the current directory.
 
-    Example:
-    if __name__ == "__main__":
-        main()
-    """
+    Example:
+    if __name__ == "__main__":
+        main()
+    """
     subscriptions = get_subscriptions()
     all_assessments = {}
 
