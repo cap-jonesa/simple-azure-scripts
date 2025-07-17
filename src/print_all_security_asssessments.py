@@ -30,6 +30,9 @@ Example:
 import subprocess
 import json
 import time
+import logging
+from libs.log_config import setup_logging
+
 
 def get_subscriptions():
     """
@@ -47,8 +50,13 @@ def get_subscriptions():
     az cli command:
     az account list --output json
     """
+    logging.info('Fetching subscriptions...')
     result = subprocess.run(['az', 'account', 'list', '--query', '[].id', '-o', 'json'],
-                            capture_output=True, text=True)
+                            capture_output=True, text=True, check=True)
+    if result.returncode != 0:
+        logging.error('Failed to fetch subscriptions: %s', result.stderr)
+        return []
+    logging.info('Subscriptions fetched successfully.')
     return json.loads(result.stdout)
 
 def get_assessments(subscription_id):
@@ -67,9 +75,17 @@ def get_assessments(subscription_id):
     az cli command:
     az account set --subscription $subscription_id
     """
-    subprocess.run(['az', 'account', 'set', '--subscription', subscription_id])
+    logging.info('Setting subscription to %s', subscription_id)
+    subprocess.run(['az', 'account', 'set', '--subscription', subscription_id],
+                   check=True)
+    logging.info('Fetching assessments for subscription %s', subscription_id)
     result = subprocess.run(['az', 'security', 'assessment', 'list', '-o', 'json'],
-                            capture_output=True, text=True)
+                            capture_output=True, text=True, check=True)
+    if result.returncode != 0:
+        logging.error('Failed to fetch assessments for subscription %s: %s',
+                      subscription_id, result.stderr)
+        return []
+    logging.info('Assessments fetched successfully for subscription %s', subscription_id)
     return json.loads(result.stdout)
 
 def main():
@@ -86,6 +102,8 @@ def main():
     if __name__ == "__main__":
         main()
     """
+    setup_logging()
+    logging.info('Starting the script...')
     subscriptions = get_subscriptions()
     all_assessments = {}
 
@@ -93,8 +111,9 @@ def main():
         assessments = get_assessments(subscription_id)
         all_assessments[subscription_id] = assessments
         time.sleep(5)
-    with open('assessments.json', 'w') as f:
+    with open('../results/assessments.json', 'w', encoding='utf-8') as f:
         json.dump(all_assessments, f, indent=4)
+    logging.info('Assessments written to assessments.json')
 
 if __name__ == "__main__":
     main()
